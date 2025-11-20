@@ -1,5 +1,7 @@
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 
+from metadata.models import Metadata, MetadataConfig
 
 class NodeType(models.Model):
     """User-defined node types (docker-linux, kafka, postgres-db, etc.)"""
@@ -7,9 +9,9 @@ class NodeType(models.Model):
     name = models.CharField(max_length=100, unique=True)
     display_name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    icon = models.CharField(max_length=50, blank=True, help_text="Icon identifier for frontend")
-    color = models.CharField(max_length=7, blank=True, help_text="Hex color code (e.g., #FF5733)")
-    created_at = models.DateTimeField(auto_now_add=True)
+    metadatas = GenericRelation(MetadataConfig)
+
+    # Styling attributes
     
     class Meta:
         ordering = ['display_name']
@@ -25,15 +27,11 @@ class Node(models.Model):
     node_id = models.AutoField(primary_key=True)
     label = models.CharField(max_length=255)
     type = models.ForeignKey(NodeType, on_delete=models.PROTECT, related_name='nodes')
-    metadatas = models.JSONField(default=dict, blank=True)
+    metadatas = GenericRelation(Metadata)
     
     # Position fields
     position_x = models.FloatField()
     position_y = models.FloatField()
-    
-    # Optional: for organizing nodes
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         ordering = ['node_id']

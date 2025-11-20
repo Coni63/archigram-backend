@@ -1,7 +1,8 @@
 from django.db import models
 
-from archigram.nodes.models import Node
-
+from metadata.models import Metadata, MetadataConfig
+from nodes.models import Node
+from django.contrib.contenttypes.fields import GenericRelation
 
 class EdgeType(models.Model):
     """User-defined node types (docker-linux, kafka, postgres-db, etc.)"""
@@ -9,7 +10,9 @@ class EdgeType(models.Model):
     name = models.CharField(max_length=100, unique=True)
     display_name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    metadatas = GenericRelation(MetadataConfig)
+    
+    # Styling attributes
     
     class Meta:
         ordering = ['display_name']
@@ -38,12 +41,8 @@ class Edge(models.Model):
     # Data fields
     label = models.CharField(max_length=255, blank=True)
     type = models.ForeignKey(EdgeType, on_delete=models.PROTECT, related_name='edges')
-    metadatas = models.JSONField(default=dict, blank=True)
-    
-    # Optional
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
+    metadatas = GenericRelation(Metadata)
+
     class Meta:
         ordering = ['id']
         indexes = [
