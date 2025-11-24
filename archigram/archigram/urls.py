@@ -22,4 +22,6 @@ urlpatterns = [
     path("", include("nodes.urls")),
     path("", include("edges.urls")),
     path("", include("metadata.urls")),
+    path("", include("project.urls")),
+    path("", include("poc.urls")),
 ]

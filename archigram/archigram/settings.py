@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "nodes",
     "edges",
     "metadata",
+    "project",
+    "poc",
 ]
 
 MIDDLEWARE = [
